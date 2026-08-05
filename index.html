@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark light" />
+
+  <!-- ============================ SEO / META ============================ -->
+  <title>Jayaprakash M — Software Development Engineer</title>
+  <meta name="description"
+        content="Portfolio of Jayaprakash M — Software Development Engineer at Zenfinity Energy building battery and e-bike products end to end. B.Tech in AI &amp; Data Science (2024)." />
+  <meta name="author" content="Jayaprakash M" />
+  <meta property="og:title" content="Jayaprakash M — Software Development Engineer" />
+  <meta property="og:description" content="Building battery &amp; e-bike products end to end — backend, data pipelines, and the web." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+  <!-- ============================ FONTS ============================ -->
+  <!-- Loaded from Google Fonts; robust system fallbacks keep it readable offline. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:ital,opsz,wght@1,9..144,400&display=swap"
+        rel="stylesheet" />
+
+  <!-- ============================ STYLES ============================ -->
+  <!-- Split for readability: variables/theme -> base -> components -> sections -> motion -->
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/sections.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ================= THE LATENT FIELD (canvas background) =================
+       A live neural-embedding field rendered by js/latent-field.js.
+       Fixed behind everything, pointer-events:none, aria-hidden. ------------ -->
+  <canvas id="latent-field" aria-hidden="true"></canvas>
+  <div class="field-scrim" aria-hidden="true"></div>
+
+  <!-- ======= Coordinate readout (playful "you are a data point") ======= -->
+  <div class="cursor-readout" id="cursorReadout" aria-hidden="true">
+    <span data-coord="x">x:000</span><span data-coord="y">y:000</span>
+  </div>
+
+  <!-- ============================ NAVBAR ============================ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a class="nav__brand" href="#top" aria-label="Home">
+        <span class="nav__brand-name">JAYAPRAKASH</span><span class="nav__brand-dot">·</span><span class="nav__brand-m">M</span>
+      </a>
+
+      <nav class="nav__links" id="navLinks" aria-label="Primary">
+        <a class="nav__link" href="#top"     data-nav><span class="nav__idx">01</span> Home</a>
+        <a class="nav__link" href="#about"   data-nav><span class="nav__idx">02</span> About</a>
+        <a class="nav__link" href="#skills"  data-nav><span class="nav__idx">03</span> Skills</a>
+        <a class="nav__link" href="#work"    data-nav><span class="nav__idx">04</span> Work</a>
+        <a class="nav__link" href="#journey" data-nav><span class="nav__idx">05</span> Journey</a>
+        <a class="nav__link" href="#beyond"  data-nav><span class="nav__idx">06</span> Beyond</a>
+        <a class="nav__link" href="#contact" data-nav><span class="nav__idx">07</span> Contact</a>
+      </nav>
+
+      <div class="nav__actions">
+        <span class="nav__tag">AI &amp; DATA SCIENCE</span>
+        <!-- theme toggle: label references "temperature 0.0<->1.0" as a subtle AI in-joke -->
+        <button class="theme-toggle" id="themeToggle" type="button"
+                aria-label="Toggle color theme" title="temperature 0.0 ↔ 1.0">
+          <span class="theme-toggle__icon" data-icon="sun"></span>
+          <span class="theme-toggle__icon" data-icon="moon"></span>
+        </button>
+        <button class="nav__menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">
+          <span data-icon="menu"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ==================== 01 · HERO / BOOT ==================== -->
+    <section class="section hero" id="top">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <span class="status-chip reveal" data-reveal>
+            <span class="status-chip__dot"></span>
+            <span data-bind="availability">Open to work</span>
+            <span class="status-chip__sep">·</span>
+            <span>Class of 2024</span>
+          </span>
+
+          <p class="hero__prompt mono reveal" data-reveal aria-hidden="true">
+            <span class="hero__prompt-caret">&gt;</span>
+            <span id="heroTyped"></span><span class="type-cursor" aria-hidden="true"></span>
+          </p>
+
+          <h1 class="hero__title reveal" data-reveal>
+            <span class="hero__hi">Hi, I'm</span>
+            <span class="hero__name" data-decode data-bind="name">Jayaprakash M</span>
+          </h1>
+
+          <p class="hero__roles reveal" data-reveal>
+            <span class="hero__roles-static">Engineering</span>
+            <span class="hero__roles-rotator" id="roleRotator"><span>Machine Learning</span></span>
+          </p>
+
+          <p class="hero__subline mono reveal" data-reveal id="heroSubline">
+            // B.Tech AI &amp; Data Science · Class of 2024
+          </p>
+
+          <p class="hero__tagline reveal" data-reveal data-bind="tagline">…</p>
+
+          <div class="hero__cta reveal" data-reveal>
+            <a class="btn btn--primary magnetic" href="#work">
+              View my work <span data-icon="arrow-right"></span>
+            </a>
+            <a class="btn btn--ghost magnetic" id="resumeBtn" href="#" download>
+              Résumé <span data-icon="download"></span>
+            </a>
+          </div>
+
+          <ul class="hero__stats reveal" id="heroStats" data-reveal aria-label="Quick stats"></ul>
+        </div>
+      </div>
+
+      <a class="scroll-cue" href="#about" aria-label="Scroll to about">
+        <span class="scroll-cue__text mono">scroll</span>
+        <span class="scroll-cue__line"></span>
+      </a>
+    </section>
+
+    <!-- ==================== 02 · ABOUT / In[1] ==================== -->
+    <section class="section about" id="about">
+      <div class="container">
+        <header class="section-head">
+          <span class="section-index mono">02 / ABOUT</span>
+          <h2 class="section-title" data-decode>About Me</h2>
+        </header>
+
+        <div class="about__grid">
+          <!-- Jupyter-style notebook cell -->
+          <div class="notebook reveal" data-reveal>
+            <div class="notebook__toolbar">
+              <span class="notebook__dot"></span><span class="notebook__dot"></span><span class="notebook__dot"></span>
+              <span class="notebook__file mono">about.ipynb</span>
+            </div>
+            <div class="notebook__cell">
+              <div class="notebook__gutter mono" id="cellCounter">In [ ]:</div>
+              <div class="notebook__code mono">
+                <span class="tok-var">jayaprakash</span>.<span class="tok-fn">run</span>(<span class="tok-str">"about"</span>)
+                <button class="notebook__run" id="runCell" type="button" aria-label="Run cell">
+                  <span data-icon="zap"></span> run
+                </button>
+              </div>
+            </div>
+            <div class="notebook__out" id="cellOut" hidden>
+              <div class="notebook__gutter mono">Out[1]:</div>
+              <div class="notebook__result" id="aboutBody"><!-- filled by render.js --></div>
+            </div>
+          </div>
+
+          <!-- Mono "spec sheet" metadata card -->
+          <aside class="spec-card reveal" data-reveal>
+            <h3 class="spec-card__title mono">// metadata</h3>
+            <dl class="spec-card__list mono" id="specSheet"><!-- filled by render.js --></dl>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 03 · SKILLS / MATRIX ==================== -->
+    <section class="section skills" id="skills">
+      <div class="container">
+        <header class="section-head">
+          <span class="section-index mono">03 / SKILLS</span>
+          <h2 class="section-title" data-decode>Skill Matrix</h2>
+          <p class="section-sub">A heatmap of my toolkit — cell intensity encodes proficiency, colour encodes domain.</p>
+        </header>
+
+        <div class="cluster-legend mono" id="clusterLegend"><!-- filled by render.js --></div>
+        <div class="skill-matrix" id="skillMatrix"><!-- filled by render.js --></div>
+      </div>
+    </section>
+
+    <!-- ==================== 04 · SELECTED WORK / MODEL CARDS ==================== -->
+    <section class="section work" id="work">
+      <div class="container">
+        <header class="section-head">
+          <span class="section-index mono">04 / BUILD LOG</span>
+          <h2 class="section-title" data-decode>What I'm Building</h2>
+          <p class="section-sub">Battery, e-bike and data projects I'm building and planning — where I'm channelling my learnings next, framed honestly by their stage.</p>
+        </header>
+        <div class="work__grid" id="workGrid"><!-- filled by render.js --></div>
+      </div>
+    </section>
+
+    <!-- ==================== 05 · JOURNEY / EXPERIMENT LOG ==================== -->
+    <section class="section journey" id="journey">
+      <div class="container">
+        <header class="section-head">
+          <span class="section-index mono">05 / EXPERIMENT LOG</span>
+          <h2 class="section-title" data-decode>My Journey</h2>
+        </header>
+        <div class="timeline" id="timeline">
+          <span class="timeline__beam" aria-hidden="true"><span class="timeline__beam-fill" id="timelineBeam"></span></span>
+          <!-- entries filled by render.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 06 · BEYOND THE CODE ==================== -->
+    <section class="section beyond" id="beyond">
+      <div class="container">
+        <header class="section-head">
+          <span class="section-index mono">06 / BEYOND CODE</span>
+          <h2 class="section-title" data-decode>Beyond the Code</h2>
+          <p class="section-sub" id="beyondSub">…</p>
+        </header>
+        <div class="beyond__grid" id="beyondGrid"><!-- filled by render.js --></div>
+      </div>
+    </section>
+
+    <!-- ==================== 07 · CONTACT / TERMINAL ==================== -->
+    <section class="section contact" id="contact">
+      <div class="container">
+        <header class="section-head section-head--center">
+          <span class="section-index mono">07 / CONTACT</span>
+          <h2 class="section-title section-title--xl" data-decode data-bind="contactHeading">Let's build something intelligent</h2>
+          <p class="section-sub" data-bind="contactSub">…</p>
+        </header>
+
+        <div class="contact__grid">
+          <!-- Working terminal -->
+          <div class="terminal reveal" data-reveal id="terminal">
+            <div class="terminal__bar">
+              <span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span>
+              <span class="terminal__title mono">jayaprakash@portfolio: ~</span>
+            </div>
+            <div class="terminal__body mono" id="terminalBody" tabindex="0" role="log" aria-live="polite" aria-label="Interactive terminal"></div>
+            <div class="terminal__inputline mono">
+              <span class="terminal__prompt">visitor@jp:~$</span>
+              <input class="terminal__input" id="terminalInput" type="text"
+                     autocomplete="off" autocapitalize="off" spellcheck="false"
+                     aria-label="Terminal command input" placeholder="type 'help' and press enter" />
+            </div>
+          </div>
+
+          <!-- Plain fallback form (always available, mailto-based) -->
+          <form class="contact-form reveal" data-reveal id="contactForm">
+            <h3 class="contact-form__title">Prefer a form?</h3>
+            <label class="field">
+              <span class="field__label">Name</span>
+              <input class="field__input" name="name" type="text" required autocomplete="name" />
+            </label>
+            <label class="field">
+              <span class="field__label">Email</span>
+              <input class="field__input" name="email" type="email" required autocomplete="email" />
+            </label>
+            <label class="field">
+              <span class="field__label">Message</span>
+              <textarea class="field__input" name="message" rows="4" required></textarea>
+            </label>
+            <button class="btn btn--primary magnetic" type="submit">
+              Send message <span data-icon="mail"></span>
+            </button>
+            <p class="contact-form__note mono">Opens your mail app — nothing is sent automatically.</p>
+          </form>
+        </div>
+
+        <div class="contact__socials" id="contactSocials"><!-- filled by render.js --></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__status mono">
+        <span class="footer__status-dot"></span>
+        model: v2024 · status: <span data-bind="availability">available</span> · replies &lt; 24h
+        <span class="footer__clock" id="footerClock">--:--:--</span>
+      </div>
+      <p class="footer__colophon mono">DESIGNED &amp; CODED · <span data-bind="name">Jayaprakash M</span> · 2025</p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript">This portfolio uses JavaScript for its interactive graphics. Please enable JavaScript to view the full experience.</div>
+  </noscript>
+
+  <!-- ============================ SCRIPTS ============================ -->
+  <!-- Order matters: data + icons first, then engine + renderers, then boot. -->
+  <script src="js/data.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/latent-field.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/interactions.js"></script>
+  <script src="js/terminal.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+/* =============================================================================
+ *  theme.css  —  Design tokens (colours, type, spacing) + light/dark themes
+ * =============================================================================
+ *  Everything visual flows from these CSS custom properties. To re-skin the
+ *  whole site, edit the values here — nothing else needs to change.
+ *
+ *  The JS canvas (latent-field.js) re-reads these variables live on theme
+ *  toggle, so the background graphic recolours in place.
+ * ========================================================================== */
+
+:root {
+  /* ---- Type families ---------------------------------------------------- */
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-serif:   "Fraunces", Georgia, "Times New Roman", serif;
+
+  /* ---- Type scale (fluid via clamp) ------------------------------------ */
+  --fs-hero:   clamp(2.75rem, 7vw, 6rem);
+  --fs-h2:     clamp(2rem, 4.5vw, 3.25rem);
+  --fs-h2-xl:  clamp(2.4rem, 6vw, 4.5rem);
+  --fs-h3:     clamp(1.25rem, 2.5vw, 1.6rem);
+  --fs-lead:   clamp(1.05rem, 1.6vw, 1.3rem);
+  --fs-body:   1rem;
+  --fs-sm:     0.875rem;
+  --fs-xs:     0.75rem;
+
+  /* ---- Spacing scale ---------------------------------------------------- */
+  --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;  --sp-4: 1rem;
+  --sp-5: 1.5rem;   --sp-6: 2rem;     --sp-7: 3rem;     --sp-8: 4rem;
+  --sp-9: 6rem;     --sp-10: 8rem;
+
+  /* ---- Radius / borders ------------------------------------------------- */
+  --radius-sm: 8px;
+  --radius:    14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* ---- Layout ----------------------------------------------------------- */
+  --container: 1180px;
+  --nav-h: 72px;
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur: 320ms;
+  --dur-slow: 620ms;
+
+  /* ---- Z-index ladder --------------------------------------------------- */
+  --z-field: 0;
+  --z-content: 1;
+  --z-nav: 50;
+  --z-toast: 90;
+}
+
+/* ========================== DARK THEME (default) ========================== */
+:root,
+:root[data-theme="dark"] {
+  --bg:            #0A0E14;
+  --bg-2:          #0c111a;
+  --surface:       #121821;
+  --surface-2:     #161d28;
+  --surface-3:     #1b2431;
+  --line:          rgba(255, 255, 255, 0.09);
+  --line-strong:   rgba(255, 255, 255, 0.16);
+
+  --text:          #E6EDF3;
+  --text-muted:    #7D8896;
+  --text-faint:    #77818f;   /* meets WCAG AA on --bg */
+
+  /* 3 skill/data clusters — used by the canvas AND the UI */
+  --teal:          #5EEAD4;   /* ML / Python           */
+  --violet:        #A78BFA;   /* Data / Analytics      */
+  --blue:          #6EA8FE;   /* Tools / Infrastructure */
+
+  --accent:        var(--teal);
+  --gradient:      linear-gradient(135deg, #5EEAD4 0%, #6EA8FE 45%, #A78BFA 100%);
+  --gradient-soft: linear-gradient(135deg, rgba(94,234,212,0.14), rgba(167,139,250,0.14));
+
+  /* Glass (used ONLY on floating panels) */
+  --glass-bg:      rgba(18, 24, 33, 0.55);
+  --glass-border:  rgba(255, 255, 255, 0.10);
+  --glass-hi:      rgba(255, 255, 255, 0.06);
+  --glass-blur:    16px;
+
+  --shadow-sm: 0 2px 10px rgba(0,0,0,0.35);
+  --shadow:    0 18px 50px -18px rgba(0,0,0,0.7);
+  --shadow-glow: 0 0 40px -8px rgba(94,234,212,0.35);
+
+  /* Canvas field tuning (read by JS) */
+  --field-node-opacity: 0.9;
+  --field-edge-opacity: 0.5;
+  --field-glow: 1;
+  color-scheme: dark;
+}
+
+/* ============================== LIGHT THEME =============================== */
+:root[data-theme="light"] {
+  --bg:            #F7F9FB;
+  --bg-2:          #eef2f7;
+  --surface:       #FFFFFF;
+  --surface-2:     #f4f7fa;
+  --surface-3:     #eaeff5;
+  --line:          rgba(10, 14, 20, 0.10);
+  --line-strong:   rgba(10, 14, 20, 0.18);
+
+  --text:          #0A0E14;
+  --text-muted:    #5A6673;
+  --text-faint:    #67717d;   /* meets WCAG AA on --bg */
+
+  /* Accents darken for AA contrast on white, same 3-cluster logic */
+  --teal:          #0D9488;
+  --violet:        #7C3AED;
+  --blue:          #2563EB;
+
+  --accent:        var(--teal);
+  --gradient:      linear-gradient(135deg, #0D9488 0%, #2563EB 50%, #7C3AED 100%);
+  --gradient-soft: linear-gradient(135deg, rgba(13,148,136,0.10), rgba(124,58,237,0.10));
+
+  --glass-bg:      rgba(255, 255, 255, 0.6);
+  --glass-border:  rgba(10, 14, 20, 0.08);
+  --glass-hi:      rgba(255, 255, 255, 0.8);
+  --glass-blur:    18px;
+
+  --shadow-sm: 0 2px 10px rgba(30,41,59,0.10);
+  --shadow:    0 20px 50px -20px rgba(30,41,59,0.30);
+  --shadow-glow: 0 0 40px -10px rgba(13,148,136,0.25);
+
+  --field-node-opacity: 0.55;
+  --field-edge-opacity: 0.32;
+  --field-glow: 0.55;
+  color-scheme: light;
+}

@@ -1,0 +1,73 @@
+/* =============================================================================
+ *  animations.css  —  Keyframes, scroll-reveal system, reduced-motion contract
+ * ========================================================================== */
+
+/* --------------------------- Scroll reveal ------------------------------- */
+/* Elements marked [data-reveal] start hidden; JS adds .is-visible on scroll-in. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+  will-change: opacity, transform;
+}
+[data-reveal].is-visible { opacity: 1; transform: none; }
+/* Stagger children when a container opts in */
+[data-reveal-stagger] > * { opacity: 0; transform: translateY(20px); transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease); }
+[data-reveal-stagger].is-visible > * { opacity: 1; transform: none; }
+
+/* ------------------------------ Keyframes -------------------------------- */
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+@keyframes pulse-dot {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--teal) 65%, transparent); }
+  70%  { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@keyframes role-enter { from { opacity: 0; transform: translateY(0.5em); } to { opacity: 1; transform: none; } }
+
+@keyframes scroll-run { 0% { top: -50%; } 100% { top: 120%; } }
+
+@keyframes float-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* Radial "dawn" wipe played on theme toggle (element injected by JS) */
+.theme-wipe {
+  position: fixed; z-index: var(--z-toast); border-radius: 50%;
+  pointer-events: none; mix-blend-mode: normal;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);
+  animation: dawn-wipe 620ms var(--ease) forwards;
+}
+@keyframes dawn-wipe {
+  from { transform: scale(0); opacity: 0.9; }
+  to   { transform: scale(1); opacity: 0; }
+}
+
+/* Heading decode/glitch — JS scrambles characters, this styles the interim */
+[data-decode] .decode-char { display: inline-block; }
+[data-decode].is-decoding .decode-char { color: var(--accent); }
+
+/* ---------------- Project micro-viz draw-in (on card .is-in) ------------- */
+.work-card__viz .viz-draw { stroke-dasharray: 260; stroke-dashoffset: 260; }
+.work-card.is-in .viz-draw { animation: viz-draw 1.4s var(--ease) 0.15s forwards; }
+@keyframes viz-draw { to { stroke-dashoffset: 0; } }
+
+.work-card__viz .viz-cell,
+.work-card__viz .viz-bar { transform-box: fill-box; transform-origin: center; opacity: 0; transform: scale(0.4); }
+.work-card.is-in .viz-cell { animation: viz-pop 0.5s var(--ease) forwards; animation-delay: calc(var(--i) * 60ms + 0.15s); }
+.work-card.is-in .viz-bar  { animation: viz-rise 0.6s var(--ease) forwards; animation-delay: calc(var(--i) * 70ms + 0.15s); transform-origin: bottom; }
+@keyframes viz-pop  { to { opacity: 1; transform: scale(1); } }
+@keyframes viz-rise { from { opacity: 0; transform: scaleY(0); } to { opacity: 1; transform: scaleY(1); } }
+
+/* --------------------------- Reduced motion ------------------------------ */
+/* Honour the OS setting: freeze all motion, reveal everything statically.   */
+@media (prefers-reduced-motion: reduce) {
+  * , *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal], [data-reveal-stagger] > * { opacity: 1 !important; transform: none !important; }
+  .type-cursor, .status-chip__dot, .footer__status-dot { animation: none !important; }
+  .scroll-cue__line::after { display: none; }
+}
