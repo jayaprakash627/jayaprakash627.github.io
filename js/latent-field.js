@@ -1,17 +1,19 @@
 /* =============================================================================
- *  latent-field.js  —  "THE LATENT FIELD"
+ *  latent-field.js  —  "THE ENERGY FIELD"
  * =============================================================================
- *  A live Canvas2D embedding space that doubles as the site's hero art.
+ *  A live Canvas2D energy field that doubles as the site's hero art — charge
+ *  nodes carried along flowing "currents", evoking energy moving through a
+ *  battery / e-mobility system. (The public API is still named LatentField.)
  *
  *  What it does:
- *    • ~130 nodes (fewer on mobile) grouped into 3 skill clusters, each colour-
- *      coded (teal = ML/Python, violet = Data/Analytics, blue = Tools/Infra).
- *    • Nodes drift + spring toward a "home", so the field breathes without
- *      dispersing. A spatial-hash grid draws proximity edges at 60fps.
- *    • The cursor is a gravity well — nearby nodes lean in and their edges
- *      brighten ("running a similarity query").
- *    • Every ~4s a "thought pulse" fires along a short path of nodes.
- *    • Scroll morphs the whole field: galaxy → 3 cluster lobes → single core.
+ *    • ~130 charge nodes (fewer on mobile) across 3 energy channels, colour-
+ *      coded teal / blue / violet.
+ *    • Nodes drift along a smooth flow field + spring toward a "home", so the
+ *      field flows like current without dispersing. A spatial-hash grid draws
+ *      the connecting lines at 60fps.
+ *    • The cursor attracts nearby charge and brightens its links.
+ *    • Every ~2s an "energy pulse" arcs along a short path of nodes.
+ *    • Scroll morphs the whole field: galaxy → 3 lobes → single core.
  *    • Theme-aware: re-reads CSS colour variables on demand (refreshColors()).
  *    • Respects prefers-reduced-motion (static frame) and pauses when hidden.
  *
@@ -41,6 +43,7 @@ const LatentField = (() => {
   let sprites = [];               // cached glow sprite per cluster
   let pointer = { x: -9999, y: -9999, active: false };
   let scrollP = 0;                // 0 = hero, 1 = contact
+  let flowTime = 0;               // advances the flow field (energy currents)
   let pulses = [];
   let lastPulse = 0;
   let rafId = null;
@@ -225,7 +228,8 @@ const LatentField = (() => {
       path.push({ x: nodes[cur].x, y: nodes[cur].y });
     }
     if (path.length < 2) return;
-    pulses.push({ path, t: 0, speed: 0.018 + Math.random() * 0.01 });
+    // each pulse rides one of the 3 energy channels (colour), like current
+    pulses.push({ path, t: 0, speed: 0.02 + Math.random() * 0.012, color: (Math.random() * 3) | 0 });
   }
 
   function drawPulses() {
@@ -239,7 +243,7 @@ const LatentField = (() => {
       const lt = f - si;
       const a = p.path[si], b = p.path[si + 1];
       const hx = lerp(a.x, b.x, lt), hy = lerp(a.y, b.y, lt);
-      const c = colors.clusters[0];
+      const c = colors.clusters[p.color] || colors.clusters[0];
       // trail: draw a few points behind the head
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
@@ -254,9 +258,14 @@ const LatentField = (() => {
         ctx.arc(tx, ty, 2.4 - tstep * 0.25, 0, Math.PI * 2);
         ctx.fill();
       }
+      // electric head: a coloured halo with a white-hot core
       ctx.beginPath();
-      ctx.fillStyle = `rgba(255,255,255,0.9)`;
-      ctx.arc(hx, hy, 1.6, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${c.r},${c.g},${c.b},0.5)`;
+      ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(255,255,255,0.95)`;
+      ctx.arc(hx, hy, 2.1, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -264,18 +273,28 @@ const LatentField = (() => {
 
   /* ------------------------------ Physics -------------------------------- */
   function step() {
-    const spring = 0.012;
-    const friction = 0.86;
+    const spring = 0.011;         // pulls nodes home (keeps shape for scroll-morph)
+    const friction = 0.88;
+    const flowScale = 0.006;      // spatial frequency of the current lanes
+    const flowForce = 0.045;      // how strongly the current carries each node
     const interact = 150;         // cursor influence radius
     const interact2 = interact * interact;
+    flowTime += 0.0025;
 
     for (let i = 0; i < nodes.length; i++) {
       const n = nodes[i];
       const { hx, hy } = homeFor(n);
 
-      // spring toward home + gentle wander
-      n.vx += (hx - n.x) * spring + rand(-0.06, 0.06);
-      n.vy += (hy - n.y) * spring + rand(-0.06, 0.06);
+      // 1) spring toward home so the field keeps its shape
+      n.vx += (hx - n.x) * spring;
+      n.vy += (hy - n.y) * spring;
+
+      // 2) energy "current": a smooth flow field carries the charge nodes like
+      //    current moving through a grid — this is what makes it read as energy.
+      const fx = Math.cos(n.y * flowScale + flowTime) + Math.sin(n.x * flowScale * 0.7 - flowTime);
+      const fy = Math.sin(n.x * flowScale - flowTime) + Math.cos(n.y * flowScale * 0.7 + flowTime);
+      n.vx += fx * flowForce;
+      n.vy += fy * flowForce;
 
       // cursor gravity well
       n.lit *= 0.9;
@@ -385,7 +404,7 @@ const LatentField = (() => {
     step();
     rebuildGrid();
     drawEdges();
-    if (ts - lastPulse > 4000 && pulses.length < 2) { spawnPulse(); lastPulse = ts; }
+    if (ts - lastPulse > 2200 && pulses.length < 3) { spawnPulse(); lastPulse = ts; }
     drawPulses();
     drawNodes();
     rafId = requestAnimationFrame(frame);
