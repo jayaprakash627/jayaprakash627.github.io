@@ -46,6 +46,8 @@ const LatentField = (() => {
   let flowTime = 0;               // advances the flow field (energy currents)
   let pulses = [];
   let lastPulse = 0;
+  let waves = [];                 // "charge waves" that sweep across the field
+  let lastWave = 0;
   let rafId = null;
   let running = false;
 
@@ -271,6 +273,49 @@ const LatentField = (() => {
     }
   }
 
+  /* --------------------------- Charge waves ------------------------------ */
+  // Every few seconds a bright "charge wave" sweeps across the field, flashing
+  // nodes as it passes — the clearest cue that this is energy in motion.
+  function spawnWave() {
+    waves.push({
+      t: 0,
+      speed: 0.010 + Math.random() * 0.005,
+      dir: Math.random() < 0.5 ? 1 : -1,
+      color: (Math.random() * 3) | 0,
+      front: 0,
+      band: 120,
+    });
+  }
+
+  function updateWaves() {
+    for (let i = waves.length - 1; i >= 0; i--) {
+      const w = waves[i];
+      w.t += w.speed;
+      if (w.t >= 1) { waves.splice(i, 1); continue; }
+      w.front = w.dir > 0 ? lerp(-160, W + 160, w.t) : lerp(W + 160, -160, w.t);
+      for (let k = 0; k < nodes.length; k++) {
+        const d = Math.abs(nodes[k].x - w.front);
+        if (d < w.band) nodes[k].lit = Math.max(nodes[k].lit, (1 - d / w.band) * 0.95);
+      }
+    }
+  }
+
+  function drawWaves() {
+    if (!waves.length) return;
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for (const w of waves) {
+      const c = colors.clusters[w.color] || colors.clusters[0];
+      const g = ctx.createLinearGradient(w.front - w.band, 0, w.front + w.band, 0);
+      g.addColorStop(0, `rgba(${c.r},${c.g},${c.b},0)`);
+      g.addColorStop(0.5, `rgba(${c.r},${c.g},${c.b},${0.16 * colors.glow})`);
+      g.addColorStop(1, `rgba(${c.r},${c.g},${c.b},0)`);
+      ctx.fillStyle = g;
+      ctx.fillRect(w.front - w.band, 0, w.band * 2, H);
+    }
+    ctx.restore();
+  }
+
   /* ------------------------------ Physics -------------------------------- */
   function step() {
     const spring = 0.011;         // pulls nodes home (keeps shape for scroll-morph)
@@ -402,8 +447,11 @@ const LatentField = (() => {
     if (!running) return;
     ctx.clearRect(0, 0, W, H);
     step();
+    if (ts - lastWave > 3400) { spawnWave(); lastWave = ts; }
+    updateWaves();
     rebuildGrid();
     drawEdges();
+    drawWaves();
     if (ts - lastPulse > 2200 && pulses.length < 3) { spawnPulse(); lastPulse = ts; }
     drawPulses();
     drawNodes();
