@@ -66,7 +66,7 @@ const Interactions = (() => {
     );
 
     // scroll-spy: highlight the section currently in view
-    const ids = ["top", "about", "skills", "work", "journey", "beyond", "contact"];
+    const ids = ["top", "about", "skills", "process", "work", "journey", "beyond", "contact"];
     const spy = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -120,51 +120,6 @@ const Interactions = (() => {
       const passed = Math.min(Math.max(vh * 0.6 - r.top, 0), total);
       beam.style.height = (total ? (passed / total) * 100 : 0) + "%";
     });
-  }
-
-  /* ============================ Hero typing ============================== */
-  function heroType() {
-    const target = $("#heroTyped");
-    if (!target) return;
-    const text = `jayaprakash.run("about")`;
-    if (RM) { target.textContent = text; return; }
-    let i = 0;
-    const tick = () => {
-      target.textContent = text.slice(0, i);
-      if (i++ <= text.length) setTimeout(tick, 55 + Math.random() * 40);
-    };
-    setTimeout(tick, 600);
-  }
-
-  /* =========================== Role rotator ============================== */
-  function roleRotator() {
-    const box = $("#roleRotator");
-    if (!box) return;
-    const roles = D.meta?.rotatingRoles || [];
-    // One reusable span — no stacking, so it can never "lock up" even when the
-    // tab is backgrounded and timers get throttled. Fade the word out, swap the
-    // text while it's invisible, then animate the new word in.
-    box.textContent = "";
-    const span = document.createElement("span");
-    span.textContent = roles[0] || "";
-    box.appendChild(span);
-    if (roles.length <= 1 || RM) return;
-
-    let idx = 0;
-    let swapping = false;
-    setInterval(() => {
-      if (swapping) return;               // guard against overlapping cycles
-      swapping = true;
-      span.classList.add("is-out");
-      setTimeout(() => {
-        idx = (idx + 1) % roles.length;
-        span.textContent = roles[idx];
-        span.classList.remove("is-out", "is-in");
-        void span.offsetWidth;            // restart the entrance animation
-        span.classList.add("is-in");
-        swapping = false;
-      }, 300);
-    }, 2800);
   }
 
   /* ============================ Stat counters ============================ */
@@ -231,9 +186,12 @@ const Interactions = (() => {
     const stored = localStorage.getItem(KEY);
     const initial = stored || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
     root.setAttribute("data-theme", initial);
-    // The Latent Field cached dark-theme colours during its own init (it runs
+    // The canvases cached dark-theme colours during their own init (they run
     // before this). Re-sample now that the real theme is applied.
-    requestAnimationFrame(() => window.LatentField?.refreshColors());
+    requestAnimationFrame(() => {
+      window.LatentField?.refreshColors();
+      window.BatteryCell?.refreshColors();
+    });
 
     btn?.addEventListener("click", (ev) => {
       const now = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -250,8 +208,11 @@ const Interactions = (() => {
       }
       root.setAttribute("data-theme", now);
       localStorage.setItem(KEY, now);
-      // let the canvas re-read colour variables
-      requestAnimationFrame(() => window.LatentField?.refreshColors());
+      // let the canvases re-read colour variables
+      requestAnimationFrame(() => {
+        window.LatentField?.refreshColors();
+        window.BatteryCell?.refreshColors();
+      });
     });
   }
 
@@ -385,8 +346,6 @@ const Interactions = (() => {
     nav();
     fieldMorph();
     timelineBeam();
-    heroType();
-    roleRotator();
     counters();
     notebook();
     magnetic();

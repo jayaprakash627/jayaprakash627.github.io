@@ -1,10 +1,10 @@
 /* =============================================================================
  *  render.js  —  Builds the page content from js/data.js
  * =============================================================================
- *  Keeps HTML clean and content in one place. Every section's data-driven
- *  parts are generated here; structure/chrome stays in index.html.
+ *  Keeps HTML clean and content in one place. Structure/chrome stays in
+ *  index.html; everything data-driven is generated here.
  *
- *  Exposes window.Render.init(), called by main.js after data + icons load.
+ *  Exposes window.Render.init(), called by main.js.
  * ========================================================================== */
 
 const Render = (() => {
@@ -15,23 +15,25 @@ const Render = (() => {
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  /* Map a skill category -> one of the 3 cluster colours (CSS var name). */
+  /* Map a capability group -> one of the 3 accent colours. */
   function clusterColor(name) {
     const n = (name || "").toLowerCase();
-    if (n.includes("data") || n.includes("analyt") || n.includes(" ai") || n.includes("ml")) return "--violet";
-    if (n.includes("battery") || n.includes("product") || n.includes("mobility") ||
-        n.includes("web") || n.includes("tool") || n.includes("platform")) return "--blue";
-    return "--teal"; // backend / software / core
+    if (n.includes("real-time") || n.includes("data")) return "--violet";
+    if (n.includes("ownership") || n.includes("battery") || n.includes("mobility")) return "--blue";
+    return "--teal"; // backend / API
   }
   const ACCENT_VAR = { primary: "--teal", secondary: "--violet", tertiary: "--blue" };
 
-  /* Project status -> colour class + glyph (honest framing for in-progress work) */
+  /* Project status -> colour class + glyph (honest framing) */
   const STATUS = {
+    Shipped:  { cls: "is-live",     dot: "●" },
     Building: { cls: "is-building", dot: "◐" },
     Planned:  { cls: "is-planned",  dot: "○" },
     Concept:  { cls: "is-concept",  dot: "◌" },
-    Live:     { cls: "is-live",     dot: "●" },
   };
+
+  /* level -> honest band (we never print a self-scored percentage) */
+  const band = (l) => (l >= 80 ? { n: 3, label: "Core" } : l >= 68 ? { n: 2, label: "Working" } : { n: 1, label: "Learning" });
 
   /* --------------------- icons + simple text bindings -------------------- */
   function injectIcons() {
@@ -40,10 +42,11 @@ const Render = (() => {
       if (name && window.ICONS) n.innerHTML = window.ICONS.get(name);
     });
   }
+
   function bindText() {
     const map = {
       name: D.meta?.name,
-      tagline: D.meta?.tagline,
+      eyebrow: D.meta?.eyebrow,
       availability: D.meta?.availability,
       contactHeading: D.contact?.heading,
       contactSub: D.contact?.subtext,
@@ -53,24 +56,44 @@ const Render = (() => {
       if (map[key] != null) n.textContent = map[key];
     });
     if (D.meta?.name) document.title = `${D.meta.name} — ${D.meta.role || "Portfolio"}`;
-    const sub = $("#heroSubline");
-    if (sub && D.meta) sub.textContent = "// " + (D.meta.subline || `B.Tech AI & Data Science · ${D.meta.location || ""}`);
+
     const resume = $("#resumeBtn");
     if (resume) {
       if (D.meta?.resumeUrl) resume.setAttribute("href", D.meta.resumeUrl);
-      else resume.style.display = "none"; // no dead "#" link when résumé is unset
+      else resume.remove(); // no dead link while the new résumé is being written
     }
   }
 
   /* ------------------------------- HERO ---------------------------------- */
   function hero() {
-    const ul = $("#heroStats");
-    if (ul && D.stats) {
-      D.stats.forEach((s) => {
-        const li = el("li", "stat");
-        li.innerHTML =
-          `<div class="stat__value"><span class="grad-text" data-count="${s.value}" data-suffix="${esc(s.suffix || "")}">0</span></div>
-           <div class="stat__label">${esc(s.label)}</div>`;
+    // Headline — last line gets the gradient + charge-bar underline
+    const h1 = $("#heroTitle");
+    if (h1 && D.meta?.headline) {
+      h1.innerHTML = D.meta.headline
+        .map((line, i) =>
+          `<span class="hero__line${i === D.meta.headline.length - 1 ? " hero__charge" : ""}">${esc(line)}</span>`
+        )
+        .join("");
+    }
+
+    // Tagline — bold the ownership phrases so a 3-second skim lands them
+    const tag = $("#heroTagline");
+    if (tag && D.meta?.tagline) {
+      let html = esc(D.meta.tagline);
+      (D.meta.taglineBold || []).forEach((p) => {
+        html = html.replace(esc(p), `<strong>${esc(p)}</strong>`);
+      });
+      tag.innerHTML = html;
+    }
+
+    // Proof bar
+    const ul = $("#heroProof");
+    if (ul && D.proof) {
+      D.proof.forEach((p) => {
+        const li = el("li", "proof-item");
+        li.style.setProperty("--proof-accent", `var(${ACCENT_VAR[p.accent] || "--teal"})`);
+        li.innerHTML = `<span class="proof-item__label mono">${esc(p.label)}</span>
+                        <span class="proof-item__value">${esc(p.value)}</span>`;
         ul.appendChild(li);
       });
     }
@@ -80,9 +103,7 @@ const Render = (() => {
   function about() {
     const body = $("#aboutBody");
     if (body && D.about) {
-      D.about.paragraphs?.forEach((p) => {
-        body.appendChild(el("p", "", esc(p)));
-      });
+      D.about.paragraphs?.forEach((p) => body.appendChild(el("p", "", esc(p))));
       if (D.about.highlights?.length) {
         const wrap = el("div", "about__highlights");
         D.about.highlights.forEach((h) => wrap.appendChild(el("span", "chip", esc(h))));
@@ -93,9 +114,10 @@ const Render = (() => {
     if (spec && D.meta) {
       const rows = [
         ["role", esc(D.meta.role)],
-        ["status", `<span class="ok">● ${esc(D.meta.availability)}</span>`],
-        ["degree", "B.Tech · AI &amp; DS"],
-        ["class", "2024"],
+        ["company", "Zenfinity Energy"],
+        ["focus", "Battery &amp; e-mobility software"],
+        ["status", `<span class="ok">● open to talking</span>`],
+        ["degree", "B.Tech · AI &amp; DS · 2024"],
         ["location", esc(D.meta.location)],
         ["email", esc(D.contact?.email || "")],
       ];
@@ -107,59 +129,70 @@ const Render = (() => {
     }
   }
 
-  /* ------------------------------ SKILLS --------------------------------- */
+  /* --------------------------- WHAT I CAN OWN ---------------------------- */
   function skills() {
-    // Legend is generated from the ACTUAL categories, grouped by cluster colour,
-    // so it never desyncs when you edit skills in data.js.
-    const legend = $("#clusterLegend");
-    if (legend && D.skills) {
-      const groups = new Map([["--teal", []], ["--violet", []], ["--blue", []]]);
-      D.skills.forEach((g) => {
-        const c = clusterColor(g.category);
-        if (!groups.has(c)) groups.set(c, []);
-        groups.get(c).push(g.category);
-      });
-      legend.innerHTML = Array.from(groups.entries())
-        .filter(([, names]) => names.length)
-        .map(([v, names]) => `<span class="legend-item"><span class="legend-swatch" style="background:var(${v});color:var(${v})"></span>${names.map(esc).join(" · ")}</span>`)
-        .join("");
-    }
+    const intro = $("#skillsIntro");
+    if (intro && D.skillsIntro) intro.textContent = D.skillsIntro;
+
     const matrix = $("#skillMatrix");
-    if (matrix && D.skills) {
-      D.skills.forEach((group) => {
-        const cvar = clusterColor(group.category);
-        const g = el("div", "skill-group");
-        g.style.setProperty("--group-color", `var(${cvar})`);
-        const cells = (group.items || [])
-          .map(
-            (it) =>
-              `<div class="cell" style="--lvl:${it.level}" data-reveal-cell tabindex="0" aria-label="${esc(it.name)}: ${it.level}%">
-                 <span class="cell__name">${esc(it.name)}</span>
-                 <span class="cell__val">${it.level}%</span>
-                 <span class="cell__bar"></span>
-               </div>`
-          )
-          .join("");
-        g.innerHTML =
-          `<div class="skill-group__head">
-             <span class="skill-group__icon" data-icon="${esc(group.icon || "cpu")}"></span>
-             <span class="skill-group__title">${esc(group.category)}</span>
-           </div>
-           <div class="skill-cells">${cells}</div>`;
-        matrix.appendChild(g);
-      });
-    }
+    if (!matrix || !D.skills) return;
+
+    D.skills.forEach((group) => {
+      const cvar = clusterColor(group.category);
+      const g = el("article", "skill-group");
+      g.style.setProperty("--group-color", `var(${cvar})`);
+      g.setAttribute("data-reveal", "");
+
+      const cells = (group.items || [])
+        .map((it) => {
+          const b = band(it.level);
+          const pips = [0, 1, 2]
+            .map((i) => `<span class="pip${i < b.n ? " is-on" : ""}"></span>`)
+            .join("");
+          return `<li class="cap" aria-label="${esc(it.name)}: ${b.label}">
+                    <span class="cap__name">${esc(it.name)}</span>
+                    <span class="cap__meter">${pips}<span class="cap__band mono">${b.label}</span></span>
+                  </li>`;
+        })
+        .join("");
+
+      g.innerHTML =
+        `<div class="skill-group__head">
+           <span class="skill-group__icon" data-icon="${esc(group.icon || "cpu")}"></span>
+           <h3 class="skill-group__title">${esc(group.category)}</h3>
+         </div>
+         ${group.claim ? `<p class="skill-group__claim">${esc(group.claim)}</p>` : ""}
+         <ul class="skill-cells">${cells}</ul>
+         ${group.proof ? `<p class="skill-group__proof mono">${esc(group.proof)}</p>` : ""}`;
+      matrix.appendChild(g);
+    });
+  }
+
+  /* ------------------------------ PROCESS -------------------------------- */
+  function process() {
+    const P = D.process;
+    if (!P) return;
+    const sub = $("#processSub");
+    if (sub) sub.textContent = P.subtext || "";
+    const closing = $("#processClosing");
+    if (closing) closing.textContent = P.closing || "";
+    const grid = $("#processGrid");
+    if (!grid || !P.steps) return;
+    P.steps.forEach((s, i) => {
+      const li = el("li", "step");
+      li.setAttribute("data-reveal", "");
+      li.innerHTML =
+        `<span class="step__idx mono">${String(i + 1).padStart(2, "0")}</span>
+         <h3 class="step__title">${esc(s.title)}</h3>
+         <p class="step__text">${esc(s.text)}</p>`;
+      grid.appendChild(li);
+    });
   }
 
   /* ---------------------- micro-viz for project cards -------------------- */
-  // Three glance-able chart types, cycled per card. Drawn via CSS stroke-dash
-  // once the card scrolls in (class .is-in). All inherit currentColor/accent.
   function microViz(type) {
     if (type === 0) {
-      // loss curve (sparkline) — descends then wiggles
-      const pts = [4, 30, 20, 45, 26, 55, 34, 60, 40, 66, 47, 70, 52, 74, 58, 78, 63];
-      // build a smooth-ish descending loss line across width 100, height 40
-      const xs = pts.length;
+      const xs = 17;
       let d = "";
       for (let i = 0; i < xs; i++) {
         const x = (i / (xs - 1)) * 100;
@@ -172,7 +205,6 @@ const Render = (() => {
       </svg>`;
     }
     if (type === 1) {
-      // confusion-matrix micro grid 3x3
       const vals = [0.9, 0.1, 0.05, 0.08, 0.86, 0.12, 0.04, 0.09, 0.91];
       let cells = "";
       for (let r = 0; r < 3; r++)
@@ -183,7 +215,6 @@ const Render = (() => {
         }
       return `<svg viewBox="0 0 100 40" style="color:var(--card-accent)">${cells}</svg>`;
     }
-    // bar cluster
     const hs = [22, 34, 18, 30, 38, 26];
     let bars = "";
     hs.forEach((h, i) => {
@@ -194,43 +225,74 @@ const Render = (() => {
   }
 
   /* ------------------------------- WORK ---------------------------------- */
+  function projectCard(p, i) {
+    const card = el("article", "work-card" + (p.featured ? " is-featured" : ""));
+    card.style.setProperty("--card-accent", `var(${ACCENT_VAR[p.accent] || "--teal"})`);
+    card.setAttribute("data-reveal", "");
+
+    const tags = (p.tags || []).map((t) => `<span class="tag-pill">${esc(t)}</span>`).join("");
+
+    const links = [];
+    if (p.liveUrl && p.liveUrl !== "#")
+      links.push(`<a class="work-card__link" href="${esc(p.liveUrl)}" target="_blank" rel="noopener"><span data-icon="external"></span> Live demo</a>`);
+    if (p.codeUrl && p.codeUrl !== "#")
+      links.push(`<a class="work-card__link" href="${esc(p.codeUrl)}" target="_blank" rel="noopener"><span data-icon="github"></span> Read the code</a>`);
+    const linksHtml = links.length
+      ? links.join("")
+      : `<span class="work-card__soon mono"><span data-icon="tool"></span> In development</span>`;
+
+    const st = STATUS[p.status];
+    const statusHtml = st ? `<span class="work-card__status ${st.cls}">${st.dot} ${esc(p.status)}</span>` : "";
+
+    // Expandable engineering notes for shipped work
+    let study = "";
+    if (p.study) {
+      const row = (label, text, cls = "") =>
+        `<div class="study__row ${cls}"><dt class="mono">${label}</dt><dd>${esc(text)}</dd></div>`;
+      study =
+        `<details class="study">
+           <summary class="study__summary mono">Read the engineering notes <span class="study__chev">⌄</span></summary>
+           <dl class="study__body">
+             ${row("The problem", p.study.problem)}
+             ${row("What I built", p.study.built)}
+             ${row("Decisions I made", p.study.decisions)}
+             ${row("Scope, honestly", p.study.scope, "study__row--scope")}
+             ${row("What it proves", p.study.proves)}
+           </dl>
+         </details>`;
+    }
+
+    card.innerHTML =
+      `<div class="work-card__top">
+         <div class="work-card__meta-left">
+           <span class="work-card__idx">${String(i + 1).padStart(3, "0")}</span>
+           ${statusHtml}
+         </div>
+         <span class="work-card__metric">${esc(p.metric || "")}</span>
+       </div>
+       <div class="work-card__viz">${microViz(i % 3)}</div>
+       <h3 class="work-card__title">${esc(p.title)}</h3>
+       <p class="work-card__blurb">${esc(p.blurb)}</p>
+       <div class="work-card__tags">${tags}</div>
+       ${study}
+       <div class="work-card__links">${linksHtml}</div>`;
+    return card;
+  }
+
   function work() {
     const grid = $("#workGrid");
+    const roadmapGrid = $("#workRoadmap");
+    const nextWrap = $("#workNext");
     if (!grid || !D.projects) return;
-    D.projects.forEach((p, i) => {
-      const card = el("article", "work-card" + (p.featured ? " is-featured" : ""));
-      card.style.setProperty("--card-accent", `var(${ACCENT_VAR[p.accent] || "--teal"})`);
-      card.setAttribute("data-reveal", "");
-      const tags = (p.tags || []).map((t) => `<span class="tag-pill">${esc(t)}</span>`).join("");
 
-      // Only render links that actually exist; otherwise show an honest note.
-      const realLinks = [];
-      if (p.liveUrl && p.liveUrl !== "#")
-        realLinks.push(`<a class="work-card__link" href="${esc(p.liveUrl)}" target="_blank" rel="noopener"><span data-icon="external"></span> Live</a>`);
-      if (p.codeUrl && p.codeUrl !== "#")
-        realLinks.push(`<a class="work-card__link" href="${esc(p.codeUrl)}" target="_blank" rel="noopener"><span data-icon="github"></span> Code</a>`);
-      const linksHtml = realLinks.length
-        ? realLinks.join("")
-        : `<span class="work-card__soon mono"><span data-icon="tool"></span> In development</span>`;
+    const shipped = D.projects.filter((p) => p.status === "Shipped");
+    const rest = D.projects.filter((p) => p.status !== "Shipped");
 
-      const st = STATUS[p.status];
-      const statusHtml = st ? `<span class="work-card__status ${st.cls}">${st.dot} ${esc(p.status)}</span>` : "";
-
-      card.innerHTML =
-        `<div class="work-card__top">
-           <div class="work-card__meta-left">
-             <span class="work-card__idx">WORK / ${String(i + 1).padStart(3, "0")}</span>
-             ${statusHtml}
-           </div>
-           <span class="work-card__metric">${esc(p.metric || "")}</span>
-         </div>
-         <div class="work-card__viz">${microViz(i % 3)}</div>
-         <h3 class="work-card__title">${esc(p.title)}</h3>
-         <p class="work-card__blurb">${esc(p.blurb)}</p>
-         <div class="work-card__tags">${tags}</div>
-         <div class="work-card__links">${linksHtml}</div>`;
-      grid.appendChild(card);
-    });
+    shipped.forEach((p, i) => grid.appendChild(projectCard(p, i)));
+    if (rest.length && roadmapGrid && nextWrap) {
+      nextWrap.hidden = false;
+      rest.forEach((p, i) => roadmapGrid.appendChild(projectCard(p, shipped.length + i)));
+    }
   }
 
   /* ----------------------------- TIMELINE -------------------------------- */
@@ -276,6 +338,25 @@ const Render = (() => {
     });
   }
 
+  /* --------------------------- WHERE I'M GOING --------------------------- */
+  function direction() {
+    const Dir = D.direction;
+    if (!Dir) return;
+    const lead = $("#directionLead");
+    if (lead) lead.textContent = Dir.lead || "";
+    const grid = $("#directionGrid");
+    if (!grid || !Dir.cards) return;
+    Dir.cards.forEach((c) => {
+      const card = el("article", "dir-card");
+      card.style.setProperty("--card-accent", `var(${ACCENT_VAR[c.accent] || "--teal"})`);
+      card.setAttribute("data-reveal", "");
+      card.innerHTML =
+        `<span class="dir-card__label mono">${esc(c.label)}</span>
+         <p class="dir-card__text">${esc(c.text)}</p>`;
+      grid.appendChild(card);
+    });
+  }
+
   /* ----------------------------- CONTACT --------------------------------- */
   function contact() {
     const wrap = $("#contactSocials");
@@ -291,18 +372,18 @@ const Render = (() => {
 
   /* ------------------------------- init ---------------------------------- */
   function init() {
-    // Each section is isolated so a bad edit in data.js can't blank the whole
-    // page — the other sections and icons still render.
     const safe = (fn, name) => { try { fn(); } catch (err) { console.error("[render:" + name + "]", err); } };
     safe(bindText, "bindText");
     safe(hero, "hero");
     safe(about, "about");
     safe(skills, "skills");
+    safe(process, "process");
     safe(work, "work");
     safe(timeline, "timeline");
     safe(athletics, "athletics");
+    safe(direction, "direction");
     safe(contact, "contact");
-    injectIcons(); // after all dynamic [data-icon] are in the DOM
+    injectIcons();
   }
 
   return { init };

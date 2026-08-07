@@ -19,6 +19,9 @@
     try { window.LatentField && window.LatentField.init(); }
     catch (err) { console.error("[latent-field]", err); }
 
+    try { window.BatteryCell && window.BatteryCell.init(); }
+    catch (err) { console.error("[battery-cell]", err); }
+
     try { window.Interactions && window.Interactions.init(); }
     catch (err) { console.error("[interactions]", err); }
 

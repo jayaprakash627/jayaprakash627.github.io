@@ -2,13 +2,12 @@
  *  data.js  —  YOUR CONTENT LIVES HERE
  * =============================================================================
  *  This is the ONLY file you need to edit to update your portfolio's content.
- *  Everything on the page (name, about, skills, projects, timeline, contact)
- *  is generated from the object below. Change the text, save, refresh — done.
+ *  Change the text, save, refresh — done.
  *
  *  Tips:
  *    • Add a project  -> copy a { ... } block inside `projects` and edit it.
- *    • Add a skill     -> add a { name, level } to a category's `items`.
- *    • Reorder sections -> handled in index.html, not here.
+ *    • Add a skill    -> add a { name, level } to a group's `items`.
+ *    • `level` 0-100 drives a 3-segment meter: 80+ = Core, 68+ = Working, else Learning.
  * ========================================================================== */
 
 const PORTFOLIO = {
@@ -16,132 +15,173 @@ const PORTFOLIO = {
   /* ---- Basic identity ---------------------------------------------------- */
   meta: {
     name: "Jayaprakash M",
-    // Short role shown under your name + in the browser tab.
     role: "Software Development Engineer",
-    // Mono subline under the hero name.
-    subline: "SDE @ Zenfinity Energy · B.Tech AI & DS '24 · Chennai, India",
-    // Rotating words that complete "Engineering ___" in the hero.
-    rotatingRoles: [
-      "Battery Systems",
-      "E-Bike Platforms",
-      "Full-Stack Products",
-      "Data Pipelines",
-      "End-to-End Delivery",
-    ],
-    // One-line hook (hero paragraph + SEO description).
+    // Small uppercase line above the headline.
+    eyebrow: "JAYAPRAKASH M · SOFTWARE DEVELOPMENT ENGINEER",
+    // The big headline — one array item per line.
+    // NOTE: "e‑mobility" uses a non-breaking hyphen (U+2011) so it never splits across lines.
+    headline: ["I build battery", "and e‑mobility products", "end to end."],
     tagline:
-      "Software Development Engineer at Zenfinity Energy, building battery and e-bike products end to end — from backend and data pipelines to the website that sells the ride.",
+      "Software Development Engineer at Zenfinity Energy. I own the backend, the real-time telemetry pipeline, and the site that sells the bike — from BMS-style data streams to checkout.",
+    // Words wrapped in <strong> inside the tagline so a 3-second skim lands the point.
+    taglineBold: ["backend", "real-time telemetry pipeline", "site that sells the bike"],
     location: "Chennai, India",
-    availability: "Building @ Zenfinity Energy", // shown in the status chip + footer
-    resumeUrl: "assets/resume/Jayaprakash-M-Resume.pdf", // replace with an updated PDF anytime
+    availability: "SDE @ Zenfinity Energy · open to talk",
+    subline: "SDE @ Zenfinity Energy · B.Tech AI & DS '24 · Chennai, India",
+    // Left empty on purpose: the old résumé is backend-generic and contradicts this
+    // positioning, so the button stays hidden. Add the path when the new PDF is ready:
+    //   resumeUrl: "assets/resume/Jayaprakash-M-Resume.pdf",
+    resumeUrl: "",
   },
 
-  /* ---- Hero call-to-action stats (edit freely) --------------------------- */
-  stats: [
-    { value: 2024, label: "B.Tech · AI & DS", suffix: "" },
-    { value: 4,    label: "Roles Held",       suffix: "+" },
-    { value: 6,    label: "Builds Planned",   suffix: "+" },
-    { value: 100,  label: "End-to-End",       suffix: "%" },
+  /* ---- Hero proof bar (replaces vanity counters) ------------------------- */
+  proof: [
+    { label: "SHIPPED", value: "2 production-grade builds · source public", accent: "primary" },
+    { label: "OWNS",    value: "API → pipeline → live UI → deploy",          accent: "secondary" },
+    { label: "DOMAIN",  value: "48V packs · BMS telemetry · e-bikes",        accent: "tertiary" },
   ],
 
   /* ---- About ------------------------------------------------------------- */
   about: {
     heading: "About Me",
     paragraphs: [
-      "I'm Jayaprakash M — an AI & Data Science graduate who found his groove where software meets hardware. Today I'm a Software Development Engineer at Zenfinity Energy, building battery and e-bike products end to end.",
-      "My favourite part is owning the whole journey: designing the backend and data pipelines, wiring up real-time telemetry, and building the website that actually puts the bike in someone's hands. I'm going all-in on battery technology and e-mobility — the systems that will move the next decade.",
+      "I build the software layer of battery and e-bike products — backend services, telemetry pipelines, and the site that sells the ride. My degree is in AI & Data Science, but the interesting part is where software meets hardware.",
+      "My favourite part is owning the whole journey: designing the data model and the services, wiring real-time telemetry from pack to screen, and shipping the front end so nothing waits on a handoff. I'm going all-in on battery technology and e-mobility — the systems that move the next decade.",
     ],
-    highlights: [
-      "Battery Systems",
-      "E-Mobility",
-      "Full-Stack",
-      "Data Pipelines",
-      "End-to-End Product",
-    ],
+    highlights: ["Battery Telemetry", "E-Mobility", "Real-Time Systems", "Data Pipelines", "End-to-End Ownership"],
   },
 
-  /* ---- Skills (grouped into 3 domains) ----------------------------------- */
-  /* `level` (0-100) drives the animated proficiency bars. Colours are keyed  */
-  /* off the category name (see clusterColor in render.js).                   */
+  /* ---- What I can own (capabilities, not a syntax list) ------------------ */
+  skillsIntro:
+    "I don't stop at \"the API works.\" I own the product — from the data coming off the pack, through the services that make sense of it, to the website that puts the bike in someone's hands. Every area below is backed by something I've actually shipped.",
+
   skills: [
     {
-      category: "Backend & Software",
+      category: "Product Ownership: Concept to Customer",
+      icon: "layers",
+      claim: "Hand me the outcome, not the ticket. I take it from \"we should build this\" to a customer using it.",
+      proof: "Proof: this site — hand-built, no framework, no build step, deployed and maintained by me.",
+      items: [
+        { name: "End-to-End Product Ownership",      level: 85 },
+        { name: "Requirements → Shipped Feature",    level: 80 },
+        { name: "Customer-Facing Web Products",      level: 80 },
+        { name: "Hardware ↔ Software Coordination",  level: 74 },
+        { name: "Technical Writing & Handover Docs", level: 75 },
+      ],
+    },
+    {
+      category: "Backend & API System Design",
       icon: "code",
+      claim: "Schema to endpoint. I design the data model, build the service, and keep it running.",
+      proof: "Proof: Smart Support Desk — ticket schema, routing service, REST layer, SQLite persistence.",
       items: [
-        { name: "Java (OOP, Collections)", level: 85 },
-        { name: "Python",                  level: 82 },
-        { name: "SQL",                     level: 80 },
-        { name: "REST APIs",               level: 78 },
-        { name: "WebSockets",              level: 75 },
-        { name: "Git & GitHub",            level: 80 },
+        { name: "Python & FastAPI Services",               level: 85 },
+        { name: "REST API Design & Contracts",             level: 82 },
+        { name: "Relational Data Modelling (SQL)",         level: 78 },
+        { name: "Java & Object-Oriented System Design",    level: 78 },
+        { name: "Async & Event-Driven Backends",           level: 74 },
+        { name: "Reliability, Error Handling & Debugging", level: 76 },
       ],
     },
     {
-      category: "Data & AI",
+      category: "Real-Time Data & Telemetry Pipelines",
       icon: "cpu",
+      claim: "Device data on a screen without lag — the hard part of any battery product.",
+      proof: "Proof: Battery Health & Telemetry Dashboard — live 48V pack stream over WebSockets.",
       items: [
-        { name: "Data Pipelines",   level: 78 },
-        { name: "Data Processing",  level: 78 },
-        { name: "Problem Solving",  level: 85 },
-        { name: "ML Foundations",   level: 65 },
-        { name: "Analytics",        level: 70 },
+        { name: "WebSocket Streaming Architecture",      level: 80 },
+        { name: "Data Pipeline & ETL Engineering",       level: 78 },
+        { name: "Time-Series Ingestion & Storage",       level: 75 },
+        { name: "Analytics & Data Visualisation",        level: 74 },
+        { name: "Applied ML & LLM Integration",          level: 70 },
+        { name: "Anomaly Detection & Signal Validation", level: 66 },
       ],
     },
     {
-      category: "Battery & Product",
+      category: "Battery Systems & E-Mobility Domain",
       icon: "zap",
+      claim: "The domain layer: what the numbers coming off a pack actually mean, and why the product should care.",
+      proof: "Proof: daily work at Zenfinity Energy on battery and e-bike products.",
       items: [
-        { name: "Battery / BMS",        level: 62 },
-        { name: "E-Mobility / EV",      level: 66 },
-        { name: "Web Development",      level: 76 },
-        { name: "End-to-End Delivery",  level: 82 },
-        { name: "System Integration",  level: 70 },
+        { name: "BMS Data & Battery Telemetry",            level: 72 },
+        { name: "E-Bike / EV Product Domain",              level: 70 },
+        { name: "State-of-Charge & State-of-Health Logic", level: 68 },
+        { name: "Embedded / Device Data Integration",      level: 68 },
+        { name: "48V Pack Architecture Fundamentals",      level: 64 },
+        { name: "Thermal & Safety Awareness",              level: 62 },
       ],
     },
   ],
 
+  /* ---- How I ship (process = reads senior without claiming seniority) ---- */
+  process: {
+    heading: "How I Ship",
+    subtext: "Same six steps whether it's a telemetry service or a product page.",
+    closing: "I ask questions early rather than guess late. It's the cheapest thing I do.",
+    steps: [
+      { title: "Start at the constraint", text: "I start at the hardware and the person waiting on it, not the ticket. What does the pack actually do, and who's blocked?" },
+      { title: "Model the data first",    text: "Schema before features. Get the data model wrong and everything downstream becomes a workaround." },
+      { title: "Thin slice to running",   text: "Smallest path that actually runs end to end — API to screen — before I add anything to it." },
+      { title: "Make it observable",      text: "Logs, health checks, and a view a non-engineer can read. If I can't see it, I can't own it." },
+      { title: "Ship, then sit with it",  text: "Deploy and watch real data for a week. The bugs that matter don't show up in tests." },
+      { title: "Write it down",           text: "README, setup steps, and why it's built this way. Handover shouldn't need me in the room." },
+    ],
+  },
+
   /* ---- Projects ---------------------------------------------------------- */
-  /* These are strong, on-theme builds aligned to battery + e-bike + software */
-  /* — framed honestly by `status` (Building / Planned / Concept / Live).     */
-  /* Add real `liveUrl` / `codeUrl` once a project is shipped and they'll     */
-  /* replace the "In development" note automatically.                         */
+  /* `status`: Shipped | Building | Planned. Shipped projects carry a full     */
+  /* case study (`study`) shown in an expandable "engineering notes" block.    */
   projects: [
     {
       title: "Battery Health & Telemetry Dashboard",
-      blurb: "A real-time BMS dashboard streaming live voltage, current, temperature, State-of-Charge and State-of-Health over WebSockets, with historical analytics.",
-      tags: ["Python", "FastAPI", "WebSockets", "IoT", "Dashboard"],
+      blurb: "A FastAPI service that streams 48V pack telemetry — voltage, current, temperature, SoC and SoH — over WebSockets to a live dashboard.",
+      tags: ["Python", "FastAPI", "WebSockets", "Telemetry", "Canvas"],
       accent: "primary",
       metric: "Real-time · BMS",
-      status: "Live",
+      status: "Shipped",
       liveUrl: "",
       codeUrl: "https://github.com/jayaprakash627/battery-health-dashboard",
       featured: true,
+      study: {
+        problem: "A battery pack is a black box until someone builds the window. Service and fleet teams need voltage, current, temperature, SoC and SoH as it happens — not in a CSV the next morning.",
+        built: "A FastAPI service that streams 48V pack telemetry over WebSockets to a live dashboard, with live charts, per-cell voltages and threshold warnings.",
+        decisions: "WebSockets over polling, so the reading on screen is the reading right now. The simulator sits behind the same interface a real BMS feed would use — swapping in hardware is a driver change, not a rewrite.",
+        scope: "Telemetry is simulated. This is the software layer, deliberately built so a real pack can be plugged into it.",
+        proves: "I can take device-shaped data all the way to a screen a technician can act on.",
+      },
     },
     {
       title: "Smart Support Desk — AI Email Triage",
-      blurb: "A support tool that reads incoming emails, classifies them by urgency and topic, then auto-creates and routes tickets with priorities and SLAs. Rule-based by default, Claude-powered when enabled.",
+      blurb: "Reads incoming support email, classifies it by urgency and category, then creates and routes a ticket with a priority and an SLA.",
       tags: ["Python", "FastAPI", "SQLite", "NLP", "AI"],
       accent: "secondary",
       metric: "AI · Triage",
-      status: "Live",
+      status: "Shipped",
       liveUrl: "",
       codeUrl: "https://github.com/jayaprakash627/smart-support-desk",
       featured: true,
+      study: {
+        problem: "Support inboxes get triaged by whoever opens them first. An urgent battery-safety email sits behind a shipping question.",
+        built: "A service that reads incoming email, classifies urgency and category, then creates and routes a ticket with priority and SLA — tracked in SQLite with a live queue dashboard.",
+        decisions: "Rules first, AI optional. The deterministic classifier runs by default and Claude takes over when a key is present. It never breaks because a third party is down, and it costs nothing to run idle.",
+        scope: "Built as a working product, not deployed publicly yet — code is on GitHub and it runs locally in one command.",
+        proves: "I ship AI features the way production wants them: with a fallback and a cost ceiling.",
+      },
     },
     {
       title: "E-Bike Fleet Telematics Platform",
-      blurb: "Track every e-bike live — location, battery %, range and ride stats — through backend APIs and a web dashboard that manages the whole fleet.",
+      blurb: "Track every e-bike live — location, battery %, range and ride stats — through backend APIs and a dashboard that manages the whole fleet.",
       tags: ["Backend", "REST API", "GPS", "Analytics"],
       accent: "tertiary",
       metric: "EV · Telematics",
       status: "Building",
       liveUrl: "",
       codeUrl: "",
-      featured: true,
+      featured: false,
     },
     {
       title: "Battery State-of-Health Prediction",
-      blurb: "An ML model that predicts battery degradation and remaining useful life from charge/discharge cycles and ride data — putting my AI & DS background to work.",
+      blurb: "An ML model that predicts battery degradation and remaining useful life from charge/discharge cycles and ride data.",
       tags: ["Python", "Machine Learning", "Time Series", "Batteries"],
       accent: "secondary",
       metric: "AI · Predictive",
@@ -152,32 +192,10 @@ const PORTFOLIO = {
     },
     {
       title: "E-Bike Storefront & Order System",
-      blurb: "The end-to-end product site: browse models, configure a build, and order an e-bike — carrying it all the way from the website to the sale.",
+      blurb: "The end-to-end product site: browse models, configure a build, and order an e-bike — carrying it from the website to the sale.",
       tags: ["Full-Stack", "Web", "SQL", "Commerce"],
       accent: "primary",
       metric: "Full-Stack · Commerce",
-      status: "Planned",
-      liveUrl: "",
-      codeUrl: "",
-      featured: false,
-    },
-    {
-      title: "Smart Charging Optimizer",
-      blurb: "Schedules and optimises charging based on battery health, usage patterns and electricity cost — kinder to the pack, easier on the bill.",
-      tags: ["Python", "Optimization", "Data"],
-      accent: "tertiary",
-      metric: "Optimization",
-      status: "Concept",
-      liveUrl: "",
-      codeUrl: "",
-      featured: false,
-    },
-    {
-      title: "Ride & Trip Analytics Pipeline",
-      blurb: "Ingests ride telemetry into clean data pipelines and turns it into insights on usage, range and battery wear across the fleet.",
-      tags: ["Data Pipelines", "SQL", "Analytics", "Python"],
-      accent: "secondary",
-      metric: "Data · Pipelines",
       status: "Planned",
       liveUrl: "",
       codeUrl: "",
@@ -251,16 +269,26 @@ const PORTFOLIO = {
     },
   ],
 
-  /* ---- Beyond the code (sports & leadership) ----------------------------- */
+  /* ---- Beyond the code (sports) ------------------------------------------ */
   athletics: {
     heading: "Beyond the Code",
     subtext:
       "Competitive powerlifting and bodybuilding taught me what engineering rewards too — discipline, progressive overload, and showing up every single day.",
     achievements: [
-      { sport: "Powerlifting",        title: "State-Level Gold",           detail: "1× Gold medal",             tier: "State",         icon: "trophy", accent: "primary"   },
-      { sport: "Powerlifting",        title: "Inter-College Overall Gold", detail: "Overall champion",          tier: "Inter-College", icon: "medal",  accent: "secondary" },
+      { sport: "Powerlifting",         title: "State-Level Gold",           detail: "1× Gold medal",              tier: "State",         icon: "trophy", accent: "primary"   },
+      { sport: "Powerlifting",         title: "Inter-College Overall Gold", detail: "Overall champion",           tier: "Inter-College", icon: "medal",  accent: "secondary" },
       { sport: "Bodybuilding · TABBA", title: "State Gold — Junior",        detail: "1st place, Junior category", tier: "State",         icon: "trophy", accent: "tertiary"  },
-      { sport: "Bodybuilding · TABBA", title: "District Silver",            detail: "2nd place",                 tier: "District",      icon: "medal",  accent: "primary"   },
+      { sport: "Bodybuilding · TABBA", title: "District Silver",            detail: "2nd place",                  tier: "District",      icon: "medal",  accent: "primary"   },
+    ],
+  },
+
+  /* ---- Where I'm going (shown at the top of Contact) --------------------- */
+  direction: {
+    lead: "I'm two years in and deliberately pointed at one thing: the software layer of energy and mobility. Batteries, telemetry, and the products built on top of them.",
+    cards: [
+      { label: "NOW", text: "SDE at Zenfinity Energy — owning backend, data pipelines and web for battery and e-bike products. Intern to full-time in three months.", accent: "primary" },
+      { label: "LEARNING DELIBERATELY", text: "CAN bus and BMS protocols, battery degradation and remaining-useful-life modelling, time-series forecasting for State-of-Health. Named because I'm in the middle of them, not because I've finished.", accent: "secondary" },
+      { label: "OPEN TO", text: "Conversations about battery and EV platforms, telemetry systems, and roles where one person owns the product end to end. Also happy to just talk shop about packs.", accent: "tertiary" },
     ],
   },
 
@@ -268,8 +296,8 @@ const PORTFOLIO = {
   contact: {
     heading: "Let's build what moves people",
     subtext:
-      "Working on batteries, e-mobility, or a product that needs someone to own it end to end? I'd love to talk. Drop a message and I'll get back to you.",
-    email: "jayaprakashmohanraj627@gmail.com", // <- your email (edit anytime)
+      "Batteries, telemetry, e-mobility, or a product that needs one person to own it end to end — that's the conversation I want. Tell me what you're working on and what's in your way.",
+    email: "jayaprakashmohanraj627@gmail.com",
     socials: [
       { name: "GitHub",   icon: "github",   url: "https://github.com/jayaprakash627", handle: "@jayaprakash627" },
       { name: "LinkedIn", icon: "linkedin", url: "https://linkedin.com/in/jaya-prakash-369139244", handle: "/in/jaya-prakash" },
@@ -278,5 +306,4 @@ const PORTFOLIO = {
   },
 };
 
-// Expose for the other scripts (no build step / modules needed).
 window.PORTFOLIO = PORTFOLIO;
