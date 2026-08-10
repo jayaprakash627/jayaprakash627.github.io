@@ -36,7 +36,7 @@ const PORTFOLIO = {
 
   /* ---- Hero proof bar (replaces vanity counters) ------------------------- */
   proof: [
-    { label: "SHIPPED", value: "2 production-grade builds · source public", accent: "primary" },
+    { label: "SHIPPED", value: "3 production-grade builds · source public", accent: "primary" },
     { label: "OWNS",    value: "API → pipeline → live UI → deploy",          accent: "secondary" },
     { label: "DOMAIN",  value: "48V packs · BMS telemetry · e-bikes",        accent: "tertiary" },
   ],
@@ -166,6 +166,24 @@ const PORTFOLIO = {
         decisions: "Rules first, AI optional. The deterministic classifier runs by default and Claude takes over when a key is present. It never breaks because a third party is down, and it costs nothing to run idle.",
         scope: "Built as a working product, not deployed publicly yet — code is on GitHub and it runs locally in one command.",
         proves: "I ship AI features the way production wants them: with a fallback and a cost ceiling.",
+      },
+    },
+    {
+      title: "Physique & Nutrition Coaching Toolkit",
+      blurb: "A coaching tool that explains every number it gives you — macros from lean mass, a micronutrient panel, and the physiology behind each target with the standard it came from.",
+      tags: ["Python", "FastAPI", "SQLite", "Canvas", "Sports Science"],
+      accent: "tertiary",
+      metric: "Coaching · Explains why",
+      status: "Shipped",
+      liveUrl: "",
+      codeUrl: "https://github.com/jayaprakash627/physique-nutrition-toolkit",
+      featured: true,
+      study: {
+        problem: "Most trainers say \"eat 180g protein\" and stop there. The client doesn't understand it, doesn't trust it, and quits by week three. I've competed in powerlifting and bodybuilding — people don't fail because the numbers were wrong, they fail because nobody explained them.",
+        built: "A FastAPI service that computes calories, macros from lean body mass, fibre, water and a 15-nutrient micronutrient panel — and returns every number with the physiology behind it, what goes wrong at too little or too much, real Indian food portions to hit it, and the published standard it came from. Plus body-fat comparison across four methods, a contest-prep planner, 1RM tools, and client tracking with progress charts.",
+        decisions: "The nutrition knowledge lives in its own package with zero dependencies on the app, so a dietitian can verify the content without reading application code. The report builder can't construct a target without an explanation and a source list attached — the \"teach, don't just calculate\" promise is enforced by the data structure, not by remembering. Charts are hand-rolled Canvas rather than a library: ~250 lines, DPR-aware, and they recolour on theme toggle.",
+        scope: "Estimates, not measurements — BMR equations carry ~±10% error and the app says so, showing the spread between body-fat methods instead of hiding behind one number. Single-coach by design: no auth, no multi-tenancy. It refuses to plan for under-18s, pregnancy, body fat below essential levels, or unsafe timelines rather than quietly producing a harmful number.",
+        proves: "I can turn domain knowledge I actually hold into a product, and build software that's responsible about it — 33 cited standards, safety guardrails that block rather than warn, and 150 tests checking every formula against its published value.",
       },
     },
     {
