@@ -170,8 +170,8 @@ const PORTFOLIO = {
     },
     {
       title: "Physique & Nutrition Coaching Toolkit",
-      blurb: "A coaching tool that explains every number it gives you — macros from lean mass, a micronutrient panel, and the physiology behind each target with the standard it came from.",
-      tags: ["Python", "FastAPI", "SQLite", "Canvas", "Sports Science"],
+      blurb: "A coaching tool that explains every number it gives you — macros from lean mass, a micronutrient panel, and the physiology behind each target with the standard it came from. Plus a private client onboarding flow behind real auth.",
+      tags: ["Python", "FastAPI", "SQLite", "Auth & Security", "Canvas", "Sports Science"],
       accent: "tertiary",
       metric: "Coaching · Explains why",
       status: "Shipped",
