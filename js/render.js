@@ -260,6 +260,7 @@ const Render = (() => {
              ${row("Decisions I made", p.study.decisions)}
              ${row("Scope, honestly", p.study.scope, "study__row--scope")}
              ${row("What I changed after feedback", p.study.rebuilt)}
+             ${row("Securing it for real clients", p.study.security)}
              ${row("What it proves", p.study.proves)}
            </dl>
          </details>`;
