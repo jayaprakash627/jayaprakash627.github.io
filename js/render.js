@@ -247,8 +247,10 @@ const Render = (() => {
     // Expandable engineering notes for shipped work
     let study = "";
     if (p.study) {
+      // Optional rows render only when the project supplies them, so adding a
+      // new field to one project doesn't leave empty rows on all the others.
       const row = (label, text, cls = "") =>
-        `<div class="study__row ${cls}"><dt class="mono">${label}</dt><dd>${esc(text)}</dd></div>`;
+        text ? `<div class="study__row ${cls}"><dt class="mono">${label}</dt><dd>${esc(text)}</dd></div>` : "";
       study =
         `<details class="study">
            <summary class="study__summary mono">Read the engineering notes <span class="study__chev">⌄</span></summary>
@@ -257,6 +259,7 @@ const Render = (() => {
              ${row("What I built", p.study.built)}
              ${row("Decisions I made", p.study.decisions)}
              ${row("Scope, honestly", p.study.scope, "study__row--scope")}
+             ${row("What I changed after feedback", p.study.rebuilt)}
              ${row("What it proves", p.study.proves)}
            </dl>
          </details>`;
