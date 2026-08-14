@@ -175,7 +175,7 @@ const PORTFOLIO = {
       accent: "tertiary",
       metric: "Coaching · Explains why",
       status: "Shipped",
-      liveUrl: "",
+      liveUrl: "https://physique-nutrition-toolkit.onrender.com",
       codeUrl: "https://github.com/jayaprakash627/physique-nutrition-toolkit",
       featured: true,
       study: {
@@ -185,7 +185,7 @@ const PORTFOLIO = {
         scope: "Estimates, not measurements — BMR equations carry ~±10% error and the app says so, showing the spread between body-fat methods instead of hiding behind one number. Single-coach by design: one password, no roles, no multi-tenancy, and sessions live in memory so it doesn't scale past one worker without moving them out. It refuses to plan for under-18s, pregnancy, body fat below essential levels, or unsafe timelines rather than quietly producing a harmful number.",
         security: "Then I went to deploy it and found the real problem: Coach mode held clients' health data behind no authentication at all — fine on a laptop, a breach on a domain. Added password auth with server-side sessions, a rate-limited login, and security headers. The design decision I'd defend in an interview is that it fails closed: with no password configured, client endpoints return 503 with setup instructions instead of running open, because a missing config must never mean an unlocked door. /api/health reports whether the lock is on so a deployment mistake is one curl away from being caught. Client onboarding uses unguessable single-use links, versioned consent, and a delete that really deletes.",
         rebuilt: "Then I gave v1 to friends who train, and they wouldn't use it. The front page asked for 20 inputs — including seven calliper sites — before showing a single number. I'd built it for a coach who already owns callipers, not for someone who wants to know what to eat. So I rebuilt the entry: five plain questions, then one number, one sentence, and one priority. The full report is still there behind a fold, and the depth per number never moved. The engine already supported the gentler path; I'd just never exposed it.",
-        proves: "I can turn domain knowledge I actually hold into a product, be responsible about it — 33 cited standards, guardrails that block rather than warn, 162 tests — and then take \"nobody wants to use this\" as data and rebuild the part that was wrong instead of defending it.",
+        proves: "I can turn domain knowledge I actually hold into a product, be responsible about it — 33 cited standards, guardrails that block rather than warn, 240 tests — and then take \"nobody wants to use this\" as data and rebuild the part that was wrong instead of defending it.",
       },
     },
     {
