@@ -241,6 +241,14 @@ const Render = (() => {
       ? links.join("")
       : `<span class="work-card__soon mono"><span data-icon="tool"></span> In development</span>`;
 
+    // A demo on a free host sleeps when idle, and the first click then hangs for
+    // the better part of a minute. Without warning that reads as "his site is
+    // broken", which is the opposite of what a live link is for. Only renders
+    // when a project actually supplies one.
+    const liveNote = p.liveUrl && p.liveNote
+      ? `<p class="work-card__livenote">${esc(p.liveNote)}</p>`
+      : "";
+
     const st = STATUS[p.status];
     const statusHtml = st ? `<span class="work-card__status ${st.cls}">${st.dot} ${esc(p.status)}</span>` : "";
 
@@ -279,7 +287,8 @@ const Render = (() => {
        <p class="work-card__blurb">${esc(p.blurb)}</p>
        <div class="work-card__tags">${tags}</div>
        ${study}
-       <div class="work-card__links">${linksHtml}</div>`;
+       <div class="work-card__links">${linksHtml}</div>
+       ${liveNote}`;
     return card;
   }
 
